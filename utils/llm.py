@@ -1,28 +1,28 @@
-import os
+import streamlit as st
 from groq import Groq
-from dotenv import load_dotenv
 
-# load .env
-load_dotenv()
-
-# create groq client
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+# Create Groq client using Streamlit secrets
+client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
 def call_llm(prompt, temperature=0.7):
     """
     Call GROQ LLM
     """
 
-    response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=[
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ],
-        temperature=temperature,
-        max_tokens=2048
-    )
+    try:
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            temperature=temperature,
+            max_tokens=2048
+        )
 
-    return response.choices[0].message.content
+        return response.choices[0].message.content
+
+    except Exception as e:
+        return f"Error: {str(e)}"
